@@ -20,7 +20,7 @@ const Sidebar = ({ role, name }) => {
   };
 
   return (
-    {/* ✅ FULL SIDEBAR SCROLL */}
+    
     <aside className="w-64 bg-white border-r h-screen overflow-y-auto flex flex-col">
 
       {/* ===== BRAND ===== */}
@@ -109,28 +109,7 @@ const Sidebar = ({ role, name }) => {
           </>
         )}
 
-        {/* ================= USER ================= */}
-        {role === "user" && (
-          <>
-            <Section title="Trademark">
-              <Item to="/user/dashboard">Dashboard</Item>
-              <Item to="/user/trademark/applications">My Applications</Item>
-              <Item to="/user/trademark/journal-details">Journal Details</Item>
-              <Item to="/user/trademark/journal/monthly">Monthly Journal</Item>
-              <Item to="/user/trademark/journal/compare">Compare Journal</Item>
-              <Item to="/user/trademark/journal/search-manual">
-                Search Manual Journal
-              </Item>
-              <Item to="/user/trademark/hearings">Hearings</Item>
-              <Item to="/user/trademark/renewal-details">Renewals</Item>
-              <Item to="/user/trademark/tm-forms">TM Forms</Item>
-            </Section>
-
-            <Section title="Utility">
-              <Item to="/user/change-password">Change Password</Item>
-            </Section>
-          </>
-        )}
+        
       </div>
 
       {/* ===== LOGOUT (LAST, ALWAYS REACHABLE) ===== */}

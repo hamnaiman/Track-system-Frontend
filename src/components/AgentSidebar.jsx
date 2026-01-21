@@ -23,11 +23,16 @@ const AgentSidebar = () => {
   };
 
   return (
-    /* ✅ Sidebar itself scrolls */
-    <aside className="w-64 bg-white border-r h-screen overflow-y-auto flex flex-col">
-
+    <aside
+      className="
+        w-64 bg-white border-r h-screen
+        flex flex-col
+        overflow-y-auto overflow-x-hidden
+        scrollbar-thin scrollbar-thumb-gray-300
+      "
+    >
       {/* ===== BRAND ===== */}
-      <div className="h-20 flex items-center px-5 pt-2 border-b">
+      <div className="h-20 shrink-0 flex items-center px-5 pt-2 border-b">
         <h1 className="text-sm font-bold text-[#3E4A8A] uppercase tracking-wide">
           Trade Developers & Protectors
         </h1>
@@ -35,7 +40,6 @@ const AgentSidebar = () => {
 
       {/* ===== MENU ===== */}
       <div className="py-3 space-y-4 flex-1">
-
         <Section title="Trademark">
           <Item to="/agent/dashboard">Dashboard</Item>
           <Item to="/agent/applications">Applications</Item>
@@ -55,20 +59,20 @@ const AgentSidebar = () => {
           <Item to="/agent/reports/renewal">Renewal Report</Item>
           <Item to="/agent/reports/single-query">Single Query</Item>
         </Section>
-
       </div>
 
-      {/* ===== LOGOUT (LAST ITEM, ALWAYS VISIBLE VIA SCROLL) ===== */}
-      <div className="border-t p-3">
+      {/* ===== LOGOUT ===== */}
+      <div className="border-t p-3 shrink-0">
         <button
           onClick={handleLogout}
-          className="w-full flex items-center gap-2 px-4 py-2 text-sm
-                     text-red-600 hover:bg-red-50 rounded-md transition"
+          className="
+            w-full flex items-center gap-2 px-4 py-2 text-sm
+            text-red-600 hover:bg-red-50 rounded-md transition
+          "
         >
           Logout
         </button>
       </div>
-
     </aside>
   );
 };
