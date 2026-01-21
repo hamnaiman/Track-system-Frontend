@@ -171,7 +171,7 @@ const ApplicationDetails = () => {
         onSubmit={handleSubmit}
         className="bg-white rounded-2xl shadow-md border p-5 sm:p-6 grid grid-cols-1 md:grid-cols-2 gap-4"
       >
-        {/* ===== HEADING INSIDE WHITE BOX ===== */}
+        {/* ===== HEADING ===== */}
         <div className="md:col-span-2 mb-2">
           <h2 className="text-2xl font-bold text-[#3E4A8A]">
             Application Details
@@ -181,14 +181,64 @@ const ApplicationDetails = () => {
           </p>
         </div>
 
-        <Input name="applicationNumber" value={form.applicationNumber} onChange={handleChange} placeholder="Application Number" required />
-        <Input name="fileNumber" value={form.fileNumber} onChange={handleChange} placeholder="File Number" required />
-        <Input type="date" name="dateOfFiling" value={form.dateOfFiling} onChange={handleChange} required />
-        <Input type="date" name="takeOverDate" value={form.takeOverDate} onChange={handleChange} />
+        <Input
+          name="applicationNumber"
+          value={form.applicationNumber}
+          onChange={handleChange}
+          placeholder="Application Number"
+          required
+        />
 
-        <Input name="periodOfUse" value={form.periodOfUse} onChange={handleChange} placeholder="Period of Use" />
+        <Input
+          name="fileNumber"
+          value={form.fileNumber}
+          onChange={handleChange}
+          placeholder="File Number"
+          required
+        />
 
-        <select name="wordOrLabel" value={form.wordOrLabel} onChange={handleChange} className="input">
+        {/* ===== DATE OF FILING ===== */}
+        <div>
+          <label className="block text-sm font-medium text-gray-600 mb-1">
+            Date of Filing
+          </label>
+          <Input
+            type="date"
+            name="dateOfFiling"
+            value={form.dateOfFiling}
+            onChange={handleChange}
+            placeholder="mm/dd/yyyy"
+            required
+          />
+        </div>
+
+        {/* ===== TAKE OVER DATE ===== */}
+        <div>
+          <label className="block text-sm font-medium text-gray-600 mb-1">
+            Take Over Date
+          </label>
+          <Input
+            type="date"
+            name="takeOverDate"
+            value={form.takeOverDate}
+            onChange={handleChange}
+            placeholder="mm/dd/yyyy"
+          />
+        </div>
+
+        <Input
+          name="periodOfUse"
+          value={form.periodOfUse}
+          onChange={handleChange}
+          placeholder="Period of Use"
+        />
+
+        <select
+          name="wordOrLabel"
+          value={form.wordOrLabel}
+          onChange={handleChange}
+          className="input"
+        >
           <option value="Word">Word</option>
           <option value="Label">Label</option>
         </select>
@@ -213,25 +263,77 @@ const ApplicationDetails = () => {
           </div>
         </div>
 
-        <Input name="trademark" value={form.trademark} onChange={handleChange} placeholder="Trademark" required />
-        <textarea name="goods" value={form.goods} onChange={handleChange} placeholder="Goods" className="input md:col-span-2" />
+        <Input
+          name="trademark"
+          value={form.trademark}
+          onChange={handleChange}
+          placeholder="Trademark"
+          required
+        />
 
-        <select name="client" value={form.client} onChange={handleChange} className="input" required>
+        <textarea
+          name="goods"
+          value={form.goods}
+          onChange={handleChange}
+          placeholder="Goods"
+          className="input md:col-span-2"
+        />
+
+        <select
+          name="client"
+          value={form.client}
+          onChange={handleChange}
+          className="input"
+          required
+        >
           <option value="">Select Client</option>
-          {customers.map(c => (
-            <option key={c._id} value={c._id}>{c.customerName}</option>
+          {customers.map((c) => (
+            <option key={c._id} value={c._id}>
+              {c.customerName}
+            </option>
           ))}
         </select>
+     <span className="flex flex-col sm:flex-row sm:items-center gap-2 text-sm sm:text-base">
+  <span>Show Cause Received:</span>
+  <select
+    name="showCauseReceived"
+    value={form.showCauseReceived}
+    onChange={handleChange}
+    className="border border-gray-300 rounded px-2 py-1 focus:outline-none focus:ring-2 focus:ring-blue-500"
+  >
+    <option value="No">No</option>
+    <option value="Yes">Yes</option>
+  </select>
+</span>
 
-        <select name="showCauseReceived" value={form.showCauseReceived} onChange={handleChange} className="input">
-          <option value="No">No</option>
-          <option value="Yes">Yes</option>
-        </select>
 
-        <Input name="conflictingTrademark" value={form.conflictingTrademark} onChange={handleChange} placeholder="Conflicting Trademark" />
-        <Input name="tmNumber" value={form.tmNumber} onChange={handleChange} placeholder="TM Number" />
-        <Input type="date" name="reminderDate" value={form.reminderDate} onChange={handleChange} />
-        <Input name="reminderRemark" value={form.reminderRemark} onChange={handleChange} placeholder="Reminder Remark" />
+        <Input
+          name="conflictingTrademark"
+          value={form.conflictingTrademark}
+          onChange={handleChange}
+          placeholder="Conflicting Trademark"
+        />
+
+        <Input
+          name="tmNumber"
+          value={form.tmNumber}
+          onChange={handleChange}
+          placeholder="TM Number"
+        />
+
+        <Input
+          type="date"
+          name="reminderDate"
+          value={form.reminderDate}
+          onChange={handleChange}
+        />
+
+        <Input
+          name="reminderRemark"
+          value={form.reminderRemark}
+          onChange={handleChange}
+          placeholder="Reminder Remark"
+        />
 
         <div className="md:col-span-2 text-right pt-4">
           <button className="bg-[#3E4A8A] text-white px-8 py-2 rounded-lg">
@@ -253,13 +355,23 @@ const ApplicationDetails = () => {
             </tr>
           </thead>
           <tbody>
-            {applications.map(app => (
+            {applications.map((app) => (
               <tr key={app._id} className="border-b">
                 <Td>{app.applicationNumber}</Td>
                 <Td>{app.trademark}</Td>
                 <Td>{app.client?.customerName}</Td>
-                <Td className="text-blue-600 cursor-pointer" onClick={() => handleEdit(app)}>Edit</Td>
-                <Td className="text-red-600 cursor-pointer" onClick={() => handleDelete(app._id)}>Delete</Td>
+                <Td
+                  className="text-blue-600 cursor-pointer"
+                  onClick={() => handleEdit(app)}
+                >
+                  Edit
+                </Td>
+                <Td
+                  className="text-red-600 cursor-pointer"
+                  onClick={() => handleDelete(app._id)}
+                >
+                  Delete
+                </Td>
               </tr>
             ))}
           </tbody>
@@ -268,15 +380,29 @@ const ApplicationDetails = () => {
 
       {/* ===== MOBILE CARDS ===== */}
       <div className="md:hidden space-y-3">
-        {applications.map(app => (
+        {applications.map((app) => (
           <div key={app._id} className="bg-white border rounded-xl p-4 shadow-sm">
             <p className="font-semibold">{app.trademark}</p>
-            <p className="text-sm text-gray-600">App #: {app.applicationNumber}</p>
-            <p className="text-sm text-gray-600">Client: {app.client?.customerName}</p>
+            <p className="text-sm text-gray-600">
+              App #: {app.applicationNumber}
+            </p>
+            <p className="text-sm text-gray-600">
+              Client: {app.client?.customerName}
+            </p>
 
             <div className="flex gap-4 mt-2 text-sm">
-              <button className="text-blue-600" onClick={() => handleEdit(app)}>Edit</button>
-              <button className="text-red-600" onClick={() => handleDelete(app._id)}>Delete</button>
+              <button
+                className="text-blue-600"
+                onClick={() => handleEdit(app)}
+              >
+                Edit
+              </button>
+              <button
+                className="text-red-600"
+                onClick={() => handleDelete(app._id)}
+              >
+                Delete
+              </button>
             </div>
           </div>
         ))}
@@ -302,5 +428,9 @@ export default ApplicationDetails;
 
 /* ===== HELPERS ===== */
 const Input = (props) => <input {...props} className="input" />;
-const Th = ({ children }) => <th className="p-3 text-left font-bold">{children}</th>;
-const Td = ({ children, className = "" }) => <td className={`p-3 ${className}`}>{children}</td>;
+const Th = ({ children }) => (
+  <th className="p-3 text-left font-bold">{children}</th>
+);
+const Td = ({ children, className = "" }) => (
+  <td className={`p-3 ${className}`}>{children}</td>
+);

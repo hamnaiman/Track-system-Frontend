@@ -23,7 +23,7 @@ const AgentSidebar = () => {
   };
 
   return (
-    <aside className="w-64 bg-white border-r h-screen flex flex-col">
+    <aside className="w-64 bg-white border-r min-h-screen flex flex-col">
 
       {/* ===== BRAND (TOP SPACE FIXED) ===== */}
       <div className="h-20 flex items-center px-5 pt-2 border-b shrink-0">
@@ -33,7 +33,7 @@ const AgentSidebar = () => {
       </div>
 
       {/* ===== MENU (SCROLL AREA) ===== */}
-      <div className="flex-1 overflow-y-auto min-h-0 py-3 space-y-4">
+      <div className="flex-1 overflow-y-auto py-3 space-y-4">
 
         <Section title="Trademark">
           <Item to="/agent/dashboard">Dashboard</Item>
@@ -57,7 +57,7 @@ const AgentSidebar = () => {
 
       </div>
 
-      {/* ===== LOGOUT (STICKY BOTTOM) ===== */}
+      {/* ===== LOGOUT (BOTTOM FIXED) ===== */}
       <div className="border-t p-3 shrink-0">
         <button
           onClick={handleLogout}

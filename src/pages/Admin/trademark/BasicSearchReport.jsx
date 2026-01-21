@@ -90,13 +90,37 @@ const BasicSearchReport = () => {
         <p className="text-sm text-gray-500 mb-6">Search trademark applications using filters</p>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+
+          {/* Search By */}
           <Select name="searchBy" onChange={updateField}>
             <option value="DateOfFiling">Date Of Filing</option>
             <option value="ApplicationNo">Application No</option>
           </Select>
 
-          <Input type="date" name="startDate" onChange={updateField} />
-          <Input type="date" name="endDate" onChange={updateField} />
+          {/* Dates always stacked vertically */}
+          <div className="flex flex-col gap-4 md:col-span-2">
+            <span className="flex flex-col gap-2 text-sm sm:text-base w-full">
+              <span className="font-medium">Starting Date:</span>
+              <input
+                type="date"
+                name="startDate"
+                onChange={updateField}
+                className="w-full border border-gray-300 rounded px-2 py-1 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              />
+            </span>
+
+            <span className="flex flex-col gap-2 text-sm sm:text-base w-full">
+              <span className="font-medium">End Date:</span>
+              <input
+                type="date"
+                name="endDate"
+                onChange={updateField}
+                className="w-full border border-gray-300 rounded px-2 py-1 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              />
+            </span>
+          </div>
+
+          {/* Other Inputs */}
           <Input name="trademark" placeholder="Trademark" onChange={updateField} />
 
           <Select name="applicant" onChange={updateField}>
@@ -110,7 +134,8 @@ const BasicSearchReport = () => {
           <Input name="classFrom" placeholder="Class From" type="number" onChange={updateField} />
           <Input name="classTo" placeholder="Class To" type="number" onChange={updateField} />
 
-          <div className="md:col-span-2 flex gap-6 items-center mt-2">
+          {/* Report Type Radios */}
+          <div className="md:col-span-2 flex flex-col sm:flex-row gap-4 items-start sm:items-center mt-2">
             <label className="flex gap-2 text-sm items-center">
               <input type="radio" name="reportType" value="summary" defaultChecked onChange={updateField} />
               Summary
@@ -147,7 +172,7 @@ const BasicSearchReport = () => {
                   Goods: {item.goods || item.application?.goods || "-"}
                 </p>
               </div>
-              <div className="flex gap-3">
+              <div className="flex gap-3 flex-wrap">
                 <button onClick={() => handleEdit(item._id)} className="px-4 py-1 bg-blue-100 rounded hover:bg-blue-200 transition">
                   Edit
                 </button>
@@ -158,7 +183,7 @@ const BasicSearchReport = () => {
             </div>
 
             {filters.reportType === "details" && (
-              <div className="mt-4 text-xs bg-gray-50 rounded-lg p-3 space-y-2">
+              <div className="mt-4 text-xs bg-gray-50 rounded-lg p-3 space-y-2 overflow-x-auto">
                 <Section title="Hearings" data={item.hearings?.hearings} />
                 <Section title="Journals" data={item.journals?.entries} />
                 <Section title="Renewals" data={item.renewals?.entries} />
@@ -174,11 +199,11 @@ const BasicSearchReport = () => {
 export default BasicSearchReport;
 
 const Input = (props) => (
-  <input {...props} className="px-4 py-3 rounded-lg bg-gray-100 border focus:ring-1 focus:ring-[#3E4A8A]" />
+  <input {...props} className="w-full px-4 py-3 rounded-lg bg-gray-100 border focus:ring-1 focus:ring-[#3E4A8A]" />
 );
 
 const Select = ({ children, ...props }) => (
-  <select {...props} className="px-4 py-3 rounded-lg bg-gray-100 border focus:ring-1 focus:ring-[#3E4A8A]">
+  <select {...props} className="w-full px-4 py-3 rounded-lg bg-gray-100 border focus:ring-1 focus:ring-[#3E4A8A]">
     {children}
   </select>
 );

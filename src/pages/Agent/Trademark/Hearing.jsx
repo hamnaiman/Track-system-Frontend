@@ -3,47 +3,42 @@ import api from "../../../api/api";
 import { toast } from "react-toastify";
 
 const Hearings = () => {
-  const [applications, setApplications] = useState([]);
   const [hearings, setHearings] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  /* ================= LOAD APPLICATIONS ================= */
+  /* ================= LOAD DATA ================= */
   useEffect(() => {
-    loadApplications();
+    loadApplicationsAndHearings();
   }, []);
 
-  const loadApplications = async () => {
+  const loadApplicationsAndHearings = async () => {
     try {
+      // 🔹 1. Load applications
       const res = await api.get("/applications");
       const apps = Array.isArray(res.data)
         ? res.data
         : res.data?.data || [];
 
-      setApplications(apps);
-      fetchHearings(apps);
-    } catch {
-      toast.error("Failed to load applications");
-      setLoading(false);
-    }
-  };
-
-  /* ================= LOAD HEARINGS ================= */
-  const fetchHearings = async (apps) => {
-    try {
-      const all = [];
-
-      for (const app of apps) {
-        try {
-          const res = await api.get(`/hearings/${app._id}`);
-          if (res.data?.hearings?.length) {
-            all.push(res.data);
-          }
-        } catch {}
+      if (!apps.length) {
+        setHearings([]);
+        return;
       }
 
-      setHearings(all);
-    } catch {
-      toast.error("Failed to load hearings");
+      // 🔹 2. Load hearings in PARALLEL (FAST)
+      const requests = apps.map((app) =>
+        api
+          .get(`/hearings/${app._id}`)
+          .then((res) =>
+            res.data?.hearings?.length ? res.data : null
+          )
+          .catch(() => null)
+      );
+
+      const results = await Promise.all(requests);
+
+      setHearings(results.filter(Boolean));
+    } catch (err) {
+      toast.error("Failed to load hearing data");
     } finally {
       setLoading(false);
     }
@@ -54,14 +49,13 @@ const Hearings = () => {
 
       {/* ================= HEADER ================= */}
       <div>
-  <h2 className="text-2xl sm:text-xl md:text-2xl font-bold text-[#3E4A8A]">
-    Hearing Details
-  </h2>
-  <p className="text-xs sm:text-sm text-gray-500">
-    Hearing history for agent applications
-  </p>
-</div>
-
+        <h2 className="text-2xl sm:text-xl md:text-2xl font-bold text-[#3E4A8A]">
+          Hearing Details
+        </h2>
+        <p className="text-xs sm:text-sm text-gray-500">
+          Hearing history for agent applications
+        </p>
+      </div>
 
       {/* ================= LOADING ================= */}
       {loading && (
@@ -77,7 +71,7 @@ const Hearings = () => {
         </div>
       )}
 
-      {/* ================= MOBILE (xs / sm) ================= */}
+      {/* ================= MOBILE ================= */}
       {!loading && hearings.length > 0 && (
         <div className="grid grid-cols-1 gap-3 sm:hidden">
           {hearings.map((h) =>
@@ -116,39 +110,28 @@ const Hearings = () => {
         </div>
       )}
 
-      {/* ================= TABLE (md → 4K) ================= */}
+      {/* ================= TABLE ================= */}
       {!loading && hearings.length > 0 && (
         <div className="hidden sm:block bg-white rounded-xl shadow border overflow-x-auto">
           <table className="min-w-[900px] w-full text-xs sm:text-sm">
             <thead className="bg-gray-50 text-gray-600">
               <tr>
-                <th className="p-3 text-left whitespace-nowrap">
-                  Application #
-                </th>
-                <th className="p-3 text-left whitespace-nowrap">
-                  Hearing Date
-                </th>
-                <th className="p-3 text-left">
-                  Before
-                </th>
-                <th className="p-3 text-left">
-                  Comments / Arguments
-                </th>
+                <th className="p-3 text-left">Application #</th>
+                <th className="p-3 text-left">Hearing Date</th>
+                <th className="p-3 text-left">Before</th>
+                <th className="p-3 text-left">Comments / Arguments</th>
               </tr>
             </thead>
 
             <tbody>
               {hearings.map((h) =>
                 h.hearings.map((e) => (
-                  <tr
-                    key={e._id}
-                    className="hover:bg-blue-50 transition"
-                  >
-                    <td className="p-3 border-b whitespace-nowrap">
+                  <tr key={e._id} className="hover:bg-blue-50 transition">
+                    <td className="p-3 border-b">
                       {h.application?.applicationNumber || "—"}
                     </td>
 
-                    <td className="p-3 border-b whitespace-nowrap">
+                    <td className="p-3 border-b">
                       {new Date(e.hearingDate).toLocaleDateString()}
                     </td>
 
