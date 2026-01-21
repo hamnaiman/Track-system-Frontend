@@ -11,35 +11,45 @@ const Renewals = () => {
   const loadApplications = async () => {
     try {
       const res = await api.get("/applications");
-      setApplications(res.data.data || res.data || []);
+      setApplications(res.data?.data || []);
     } catch {
       toast.error("Failed to load applications");
     }
   };
 
-  /* ================= LOAD ALL RENEWALS ================= */
+  /* ================= LOAD RENEWALS (FAST – PARALLEL) ================= */
   const loadRenewals = async () => {
     setLoading(true);
-    let list = [];
 
     try {
-      for (const app of applications) {
-        try {
-          const res = await api.get(`/renewals/${app._id}`);
-          const entries = res.data?.entries || [];
+      const requests = applications.map((app) =>
+        api
+          .get(`/renewals/${app._id}`)
+          .then((res) => ({
+            app,
+            entries: res.data?.entries || [],
+          }))
+          .catch(() => null) // no renewal → ignore
+      );
 
-          entries.forEach((e) => {
-            list.push({
-              applicationNumber: app.applicationNumber,
-              trademark: app.trademark,
-              renewedUpto: e.renewedUpto,
-              remark: e.remark
-            });
+      const results = await Promise.all(requests);
+
+      const list = [];
+
+      results.forEach((result) => {
+        if (!result) return;
+
+        const { app, entries } = result;
+
+        entries.forEach((e) => {
+          list.push({
+            applicationNumber: app.applicationNumber,
+            trademark: app.trademark,
+            renewedUpto: e.renewedUpto,
+            remark: e.remark,
           });
-        } catch {
-          // no renewal for this application
-        }
-      }
+        });
+      });
 
       setRows(list);
     } catch {
@@ -96,10 +106,7 @@ const Renewals = () => {
 
             <tbody>
               {rows.map((r, i) => (
-                <tr
-                  key={i}
-                  className="hover:bg-gray-50 transition"
-                >
+                <tr key={i} className="hover:bg-gray-50 transition">
                   <td className="p-3 border font-medium">
                     {r.applicationNumber}
                   </td>
@@ -109,7 +116,9 @@ const Renewals = () => {
                   </td>
 
                   <td className="p-3 border">
-                    {new Date(r.renewedUpto).toLocaleDateString()}
+                    {r.renewedUpto
+                      ? new Date(r.renewedUpto).toLocaleDateString()
+                      : "—"}
                   </td>
 
                   <td className="p-3 border text-gray-600">

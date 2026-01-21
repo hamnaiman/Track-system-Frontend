@@ -20,10 +20,11 @@ const Sidebar = ({ role, name }) => {
   };
 
   return (
+    
     <aside className="w-64 bg-white border-r min-h-screen flex flex-col">
 
       {/* ===== BRAND ===== */}
-      <div className="h-20 shrink-0 border-b px-5 flex flex-col justify-center">
+      <div className="h-20 flex flex-col justify-center px-5 border-b shrink-0">
         <h1 className="text-sm font-bold text-[#3E4A8A] uppercase tracking-wide">
           TRADE DEVELOPERS & PROTECTORS
         </h1>
@@ -32,8 +33,8 @@ const Sidebar = ({ role, name }) => {
         )}
       </div>
 
-      {/* ===== MENU ===== */}
-      <div className="flex-1 overflow-y-auto py-3 space-y-4">
+      {/* ===== MENU (SCROLL AREA) ===== */}
+      <div className="flex-1 min-h-0 overflow-y-auto py-3 space-y-4">
 
         {/* ================= ADMIN ================= */}
         {role === "admin" && (
@@ -141,6 +142,7 @@ const Sidebar = ({ role, name }) => {
               <Item to="/user/trademark/journal-details">
                 Journal Details
               </Item>
+
               <Item to="/user/trademark/journal/monthly">
                 Monthly Journal
               </Item>
@@ -150,6 +152,7 @@ const Sidebar = ({ role, name }) => {
               <Item to="/user/trademark/journal/search-manual">
                 Search Manual Journal
               </Item>
+
               <Item to="/user/trademark/hearings">Hearings</Item>
               <Item to="/user/trademark/renewal-details">
                 Renewals
@@ -166,9 +169,10 @@ const Sidebar = ({ role, name }) => {
             </Section>
           </>
         )}
+
       </div>
 
-      {/* ===== LOGOUT ===== */}
+     
       <div className="border-t p-3 shrink-0">
         <button
           onClick={handleLogout}

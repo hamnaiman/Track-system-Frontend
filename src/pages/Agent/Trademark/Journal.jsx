@@ -21,11 +21,10 @@ const Journal = () => {
     loadApplications();
   }, []);
 
-  /* ================= LOAD JOURNALS FOR AGENT APPLICATIONS ================= */
+  /* ================= LOAD JOURNALS (FAST – PARALLEL) ================= */
   useEffect(() => {
     const loadJournals = async () => {
       setLoading(true);
-      const journalRows = [];
 
       if (applications.length === 0) {
         setRows([]);
@@ -33,10 +32,25 @@ const Journal = () => {
         return;
       }
 
-      for (const app of applications) {
-        try {
-          const res = await api.get(`/journals/${app._id}`);
-          const entries = res.data?.data?.entries || [];
+      try {
+        const requests = applications.map((app) =>
+          api
+            .get(`/journals/${app._id}`)
+            .then((res) => ({
+              app,
+              entries: res.data?.data?.entries || [],
+            }))
+            .catch(() => null) // journal not found → ignore
+        );
+
+        const results = await Promise.all(requests);
+
+        const journalRows = [];
+
+        results.forEach((result) => {
+          if (!result) return;
+
+          const { app, entries } = result;
 
           entries.forEach((e) => {
             journalRows.push({
@@ -46,16 +60,17 @@ const Journal = () => {
               pageNo: e.pageNo,
               journalDate: e.journalDate,
               publishedDate: e.publishedDate,
-              remark: e.remark
+              remark: e.remark,
             });
           });
-        } catch {
-          // journal not created (normal case)
-        }
-      }
+        });
 
-      setRows(journalRows);
-      setLoading(false);
+        setRows(journalRows);
+      } catch (err) {
+        toast.error("Failed to load journal records");
+      } finally {
+        setLoading(false);
+      }
     };
 
     loadJournals();
@@ -63,30 +78,29 @@ const Journal = () => {
 
   return (
     <div className="space-y-6">
-
-      {/* ===== HEADER (SAME AS APPLICATIONS) ===== */}
+      {/* ===== HEADER ===== */}
       <div>
-        <h2 className="text-2xl sm:text-xl md:text-2xl font-bold text-[#3E4A8A]">
+        <h2 className="text-2xl font-bold text-[#3E4A8A]">
           Journal Details
         </h2>
-        <p className="text-xs sm:text-sm text-gray-500">
+        <p className="text-sm text-gray-500">
           Published journal entries (read-only)
         </p>
       </div>
 
-      {/* ===== TABLE OR CARD VIEW ===== */}
+      {/* ===== CONTENT ===== */}
       {loading ? (
-        <div className="p-6 text-center text-gray-500 bg-white rounded-xl shadow-sm border">
+        <div className="p-6 text-center text-gray-500 bg-white rounded-xl border">
           Loading journal records...
         </div>
       ) : rows.length === 0 ? (
-        <div className="p-6 text-center text-gray-400 bg-white rounded-xl shadow-sm border">
+        <div className="p-6 text-center text-gray-400 bg-white rounded-xl border">
           No journal records found
         </div>
       ) : (
         <>
           {/* Desktop Table */}
-          <div className="hidden md:block bg-white rounded-xl shadow-sm border overflow-x-auto">
+          <div className="hidden md:block bg-white rounded-xl border overflow-x-auto">
             <table className="min-w-full text-sm">
               <thead className="bg-gray-50">
                 <tr>
@@ -101,21 +115,13 @@ const Journal = () => {
               </thead>
               <tbody>
                 {rows.map((j, i) => (
-                  <tr key={i} className="hover:bg-blue-50 transition">
+                  <tr key={i} className="hover:bg-blue-50">
                     <Td bold>{j.applicationNumber}</Td>
                     <Td>{j.trademark || "—"}</Td>
                     <Td>{j.jNo || "—"}</Td>
                     <Td>{j.pageNo || "—"}</Td>
-                    <Td>
-                      {j.journalDate
-                        ? new Date(j.journalDate).toLocaleDateString()
-                        : "—"}
-                    </Td>
-                    <Td>
-                      {j.publishedDate
-                        ? new Date(j.publishedDate).toLocaleDateString()
-                        : "—"}
-                    </Td>
+                    <Td>{j.journalDate ? new Date(j.journalDate).toLocaleDateString() : "—"}</Td>
+                    <Td>{j.publishedDate ? new Date(j.publishedDate).toLocaleDateString() : "—"}</Td>
                     <Td>{j.remark || "—"}</Td>
                   </tr>
                 ))}
@@ -123,37 +129,16 @@ const Journal = () => {
             </table>
           </div>
 
-          {/* Mobile Card View */}
+          {/* Mobile Cards */}
           <div className="md:hidden space-y-4">
             {rows.map((j, i) => (
-              <div
-                key={i}
-                className="bg-white p-4 rounded-xl shadow-sm border space-y-2"
-              >
-                <div className="font-semibold text-sm text-[#3E4A8A]">
-                  #{i + 1}
-                </div>
-
+              <div key={i} className="bg-white p-4 rounded-xl border space-y-2">
                 <Info label="Application #" value={j.applicationNumber} />
                 <Info label="Trademark" value={j.trademark} />
                 <Info label="Journal #" value={j.jNo} />
                 <Info label="Page #" value={j.pageNo} />
-                <Info
-                  label="Journal Date"
-                  value={
-                    j.journalDate
-                      ? new Date(j.journalDate).toLocaleDateString()
-                      : "—"
-                  }
-                />
-                <Info
-                  label="Published Date"
-                  value={
-                    j.publishedDate
-                      ? new Date(j.publishedDate).toLocaleDateString()
-                      : "—"
-                  }
-                />
+                <Info label="Journal Date" value={j.journalDate ? new Date(j.journalDate).toLocaleDateString() : "—"} />
+                <Info label="Published Date" value={j.publishedDate ? new Date(j.publishedDate).toLocaleDateString() : "—"} />
                 <Info label="Remark" value={j.remark} />
               </div>
             ))}
@@ -167,7 +152,6 @@ const Journal = () => {
 export default Journal;
 
 /* ================= UI HELPERS ================= */
-
 const Th = ({ children }) => (
   <th className="p-4 border-b text-left font-semibold text-gray-600 whitespace-nowrap">
     {children}
@@ -175,11 +159,7 @@ const Th = ({ children }) => (
 );
 
 const Td = ({ children, bold }) => (
-  <td
-    className={`p-4 border-b break-words ${
-      bold ? "font-medium text-[#3E4A8A]" : "text-gray-700"
-    }`}
-  >
+  <td className={`p-4 border-b ${bold ? "font-medium text-[#3E4A8A]" : "text-gray-700"}`}>
     {children}
   </td>
 );

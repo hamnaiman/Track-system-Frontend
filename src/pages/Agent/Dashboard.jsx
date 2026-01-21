@@ -16,11 +16,8 @@ const AgentDashboard = () => {
   const navigate = useNavigate();
 
   const [applications, setApplications] = useState([]);
-  const [stats, setStats] = useState({
-    clients: 0,
-    tmForms: 0
-  });
-  const [loading, setLoading] = useState(false);
+  const [stats, setStats] = useState({ clients: 0, tmForms: 0 });
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     loadDashboard();
@@ -45,36 +42,32 @@ const AgentDashboard = () => {
         clients: payload.clients || 0,
         tmForms: payload.tmForms || 0
       });
-    } catch (err) {
+    } catch {
       toast.error("Failed to load dashboard");
     } finally {
       setLoading(false);
     }
   };
 
+  /* ===== GRAPH DATA (OPTIMIZED) ===== */
   const graphData = useMemo(() => {
     if (!applications.length) return [];
 
     const map = {};
+
     applications.forEach((app) => {
       if (!app.createdAt) return;
-      const date = new Date(app.createdAt).toLocaleDateString();
-      map[date] = (map[date] || 0) + 1;
+      const key = app.createdAt.slice(0, 10); // yyyy-mm-dd (FAST)
+      map[key] = (map[key] || 0) + 1;
     });
 
-    return Object.keys(map)
-      .map((date) => ({ date, count: map[date] }))
-      .sort((a, b) => new Date(a.date) - new Date(b.date));
+    return Object.entries(map)
+      .map(([date, count]) => ({ date, count }))
+      .sort((a, b) => a.date.localeCompare(b.date));
   }, [applications]);
 
   return (
-    <div className="
-      w-full
-      max-w-[1600px]
-      mx-auto
-      px-3 sm:px-6 lg:px-8
-      space-y-4 sm:space-y-6
-    ">
+    <div className="w-full max-w-[1600px] mx-auto px-3 sm:px-6 lg:px-8 space-y-4 sm:space-y-6">
 
       {/* HEADER */}
       <div>
@@ -88,19 +81,13 @@ const AgentDashboard = () => {
 
       {/* STATS */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
-        <StatCard
-          label="Applications"
-          value={loading ? "…" : applications.length}
+        <StatCard label="Applications" value={loading ? "…" : applications.length}
           onClick={() => navigate("/agent/applications")}
         />
-        <StatCard
-          label="Clients"
-          value={loading ? "…" : stats.clients}
+        <StatCard label="Clients" value={loading ? "…" : stats.clients}
           onClick={() => navigate("/agent/clients")}
         />
-        <StatCard
-          label="TM Forms"
-          value={loading ? "…" : stats.tmForms}
+        <StatCard label="TM Forms" value={loading ? "…" : stats.tmForms}
           onClick={() => navigate("/agent/tm-forms")}
         />
       </div>
@@ -117,31 +104,13 @@ const AgentDashboard = () => {
             Daily growth of trademark applications
           </p>
 
-          <div className="h-48 sm:h-64 md:h-72 w-full overflow-hidden">
+          <div className="h-48 sm:h-64 md:h-72">
             {loading ? (
-              <div className="h-full flex items-center justify-center text-gray-400 text-sm">
-                Loading graph…
-              </div>
+              <Skeleton />
             ) : graphData.length === 0 ? (
-              <div className="h-full flex items-center justify-center text-gray-400 border rounded-lg text-sm">
-                No application data available
-              </div>
+              <Empty />
             ) : (
-              <ResponsiveContainer width="100%" height="100%">
-                <LineChart data={graphData}>
-                  <CartesianGrid strokeDasharray="4 4" stroke="#E5E7EB" />
-                  <XAxis dataKey="date" tick={{ fontSize: 10 }} />
-                  <YAxis allowDecimals={false} tick={{ fontSize: 10 }} />
-                  <Tooltip />
-                  <Line
-                    type="monotone"
-                    dataKey="count"
-                    stroke="#3E4A8A"
-                    strokeWidth={2.5}
-                    dot={{ r: 3 }}
-                  />
-                </LineChart>
-              </ResponsiveContainer>
+              <Chart data={graphData} />
             )}
           </div>
         </div>
@@ -157,28 +126,17 @@ const AgentDashboard = () => {
             { label: "TM Forms", path: "/agent/tm-forms" },
             { label: "Clients", path: "/agent/clients" },
             { label: "Hearings", path: "/agent/hearings" },
-             { label: "Documents", path: "/agent/documents" }
+            { label: "Documents", path: "/agent/documents" }
           ].map((item) => (
             <button
               key={item.path}
               onClick={() => navigate(item.path)}
-              className="
-                w-full
-                text-left
-                px-3 sm:px-4
-                py-2 sm:py-2.5
-                text-xs sm:text-base
-                border
-                rounded-lg
-                hover:bg-[#F4F6F8]
-                transition
-              "
+              className="w-full text-left px-4 py-2 border rounded-lg hover:bg-[#F4F6F8]"
             >
               {item.label}
             </button>
           ))}
         </div>
-
       </div>
     </div>
   );
@@ -186,19 +144,42 @@ const AgentDashboard = () => {
 
 export default AgentDashboard;
 
-/* UI CARD */
+/* ===== MEMOIZED CHART ===== */
+const Chart = React.memo(({ data }) => (
+  <ResponsiveContainer width="100%" height="100%">
+    <LineChart data={data}>
+      <CartesianGrid strokeDasharray="4 4" stroke="#E5E7EB" />
+      <XAxis dataKey="date" tick={{ fontSize: 10 }} />
+      <YAxis allowDecimals={false} tick={{ fontSize: 10 }} />
+      <Tooltip />
+      <Line
+        type="monotone"
+        dataKey="count"
+        stroke="#3E4A8A"
+        strokeWidth={2.5}
+        dot={{ r: 3 }}
+      />
+    </LineChart>
+  </ResponsiveContainer>
+));
+
+/* UI */
+const Skeleton = () => (
+  <div className="h-full flex items-center justify-center text-gray-400 text-sm">
+    Loading graph…
+  </div>
+);
+
+const Empty = () => (
+  <div className="h-full flex items-center justify-center text-gray-400 border rounded-lg text-sm">
+    No application data available
+  </div>
+);
+
 const StatCard = ({ label, value, onClick }) => (
   <div
     onClick={onClick}
-    className="
-      bg-white
-      rounded-xl
-      p-3 sm:p-6
-      border
-      hover:shadow-md
-      cursor-pointer
-      transition
-    "
+    className="bg-white rounded-xl p-3 sm:p-6 border hover:shadow-md cursor-pointer"
   >
     <p className="text-[11px] sm:text-sm text-gray-500">{label}</p>
     <h2 className="text-xl sm:text-3xl font-bold text-[#3E4A8A] mt-1">

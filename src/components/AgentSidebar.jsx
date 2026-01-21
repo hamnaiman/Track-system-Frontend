@@ -23,9 +23,10 @@ const AgentSidebar = () => {
   };
 
   return (
+    /* 🔧 FIX: h-screen → min-h-screen */
     <aside className="w-64 bg-white border-r min-h-screen flex flex-col">
 
-      {/* ===== BRAND (TOP SPACE FIXED) ===== */}
+      {/* ===== BRAND ===== */}
       <div className="h-20 flex items-center px-5 pt-2 border-b shrink-0">
         <h1 className="text-sm font-bold text-[#3E4A8A] uppercase tracking-wide">
           Trade Developers & Protectors
@@ -33,7 +34,8 @@ const AgentSidebar = () => {
       </div>
 
       {/* ===== MENU (SCROLL AREA) ===== */}
-      <div className="flex-1 overflow-y-auto py-3 space-y-4">
+      {/* 🔧 FIX: min-h-0 added for flex scroll stability */}
+      <div className="flex-1 min-h-0 overflow-y-auto py-3 space-y-4">
 
         <Section title="Trademark">
           <Item to="/agent/dashboard">Dashboard</Item>
@@ -57,7 +59,7 @@ const AgentSidebar = () => {
 
       </div>
 
-      {/* ===== LOGOUT (BOTTOM FIXED) ===== */}
+      {/* ===== LOGOUT (BOTTOM — STABLE) ===== */}
       <div className="border-t p-3 shrink-0">
         <button
           onClick={handleLogout}
