@@ -20,11 +20,11 @@ const Sidebar = ({ role, name }) => {
   };
 
   return (
-    
-    <aside className="w-64 bg-white border-r min-h-screen flex flex-col">
+    {/* ✅ FULL SIDEBAR SCROLL */}
+    <aside className="w-64 bg-white border-r h-screen overflow-y-auto flex flex-col">
 
       {/* ===== BRAND ===== */}
-      <div className="h-20 flex flex-col justify-center px-5 border-b shrink-0">
+      <div className="h-20 flex flex-col justify-center px-5 border-b">
         <h1 className="text-sm font-bold text-[#3E4A8A] uppercase tracking-wide">
           TRADE DEVELOPERS & PROTECTORS
         </h1>
@@ -33,8 +33,8 @@ const Sidebar = ({ role, name }) => {
         )}
       </div>
 
-      {/* ===== MENU (SCROLL AREA) ===== */}
-      <div className="flex-1 min-h-0 overflow-y-auto py-3 space-y-4">
+      {/* ===== ALL MENU (NO SCROLL HERE) ===== */}
+      <div className="py-3 space-y-4 flex-1">
 
         {/* ================= ADMIN ================= */}
         {role === "admin" && (
@@ -51,12 +51,8 @@ const Sidebar = ({ role, name }) => {
               <Item to="/admin/setups/business-type">Business Type</Item>
               <Item to="/admin/setups/file-status">File Status</Item>
               <Item to="/admin/setups/tm-forms">TM Forms</Item>
-              <Item to="/admin/setups/agent-registration">
-                Agent Registration
-              </Item>
-              <Item to="/admin/setups/agent-list-tm">
-                Agent List TM
-              </Item>
+              <Item to="/admin/setups/agent-registration">Agent Registration</Item>
+              <Item to="/admin/setups/agent-list-tm">Agent List TM</Item>
               <Item to="/admin/setups/customer-registration">
                 Customer Registration
               </Item>
@@ -66,22 +62,12 @@ const Sidebar = ({ role, name }) => {
             </Section>
 
             <Section title="Trademark">
-              <Item to="/admin/trademark/applications">
-                Application Details
-              </Item>
+              <Item to="/admin/trademark/applications">Application Details</Item>
               <Item to="/admin/trademark/hearings">Hearings</Item>
-              <Item to="/admin/trademark/journal-details">
-                Journal Details
-              </Item>
-              <Item to="/admin/trademark/renewal-details">
-                Renewal Details
-              </Item>
-              <Item to="/admin/trademark/tm-form-entries">
-                TM Form Entries
-              </Item>
-              <Item to="/admin/trademark/documents">
-                TM Documents
-              </Item>
+              <Item to="/admin/trademark/journal-details">Journal Details</Item>
+              <Item to="/admin/trademark/renewal-details">Renewal Details</Item>
+              <Item to="/admin/trademark/tm-form-entries">TM Form Entries</Item>
+              <Item to="/admin/trademark/documents">TM Documents</Item>
             </Section>
 
             <Section title="Trademark Journal">
@@ -100,9 +86,7 @@ const Sidebar = ({ role, name }) => {
               <Item to="/admin/opposition/form-entries">
                 Opposition Form Entries
               </Item>
-              <Item to="/admin/opposition/report">
-                Opposition Report
-              </Item>
+              <Item to="/admin/opposition/report">Opposition Report</Item>
               <Item to="/admin/opposition/reminder-report">
                 Opposition Reminder Report
               </Item>
@@ -112,18 +96,12 @@ const Sidebar = ({ role, name }) => {
             </Section>
 
             <Section title="Reports">
-              <Item to="/admin/reports/basic-search">
-                Basic Search
-              </Item>
-              <Item to="/admin/reports/single-query">
-                Single Query
-              </Item>
+              <Item to="/admin/reports/basic-search">Basic Search</Item>
+              <Item to="/admin/reports/single-query">Single Query</Item>
             </Section>
 
             <Section title="Utility">
-              <Item to="/admin/change-password">
-                Change Password
-              </Item>
+              <Item to="/admin/change-password">Change Password</Item>
               <Item to="/admin/date-setup">Date Setup</Item>
               <Item to="/admin/logo-setup">Logo Setup</Item>
               <Item to="/admin/user-manual">User Manual</Item>
@@ -136,44 +114,27 @@ const Sidebar = ({ role, name }) => {
           <>
             <Section title="Trademark">
               <Item to="/user/dashboard">Dashboard</Item>
-              <Item to="/user/trademark/applications">
-                My Applications
-              </Item>
-              <Item to="/user/trademark/journal-details">
-                Journal Details
-              </Item>
-
-              <Item to="/user/trademark/journal/monthly">
-                Monthly Journal
-              </Item>
-              <Item to="/user/trademark/journal/compare">
-                Compare Journal
-              </Item>
+              <Item to="/user/trademark/applications">My Applications</Item>
+              <Item to="/user/trademark/journal-details">Journal Details</Item>
+              <Item to="/user/trademark/journal/monthly">Monthly Journal</Item>
+              <Item to="/user/trademark/journal/compare">Compare Journal</Item>
               <Item to="/user/trademark/journal/search-manual">
                 Search Manual Journal
               </Item>
-
               <Item to="/user/trademark/hearings">Hearings</Item>
-              <Item to="/user/trademark/renewal-details">
-                Renewals
-              </Item>
-              <Item to="/user/trademark/tm-forms">
-                TM Forms
-              </Item>
+              <Item to="/user/trademark/renewal-details">Renewals</Item>
+              <Item to="/user/trademark/tm-forms">TM Forms</Item>
             </Section>
 
             <Section title="Utility">
-              <Item to="/user/change-password">
-                Change Password
-              </Item>
+              <Item to="/user/change-password">Change Password</Item>
             </Section>
           </>
         )}
-
       </div>
 
-     
-      <div className="border-t p-3 shrink-0">
+      {/* ===== LOGOUT (LAST, ALWAYS REACHABLE) ===== */}
+      <div className="border-t p-3">
         <button
           onClick={handleLogout}
           className="w-full px-4 py-2 text-sm text-red-600 hover:bg-red-50 rounded-md"
