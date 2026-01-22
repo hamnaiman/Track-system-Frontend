@@ -1,11 +1,11 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import api from "../../../api/api";
 import { toast } from "react-toastify";
 
 const AgentRegistration = () => {
   const [loading, setLoading] = useState(false);
 
-  // 🔒 STATE MATCHES BACKEND MODEL EXACTLY
+  // 🔒 STATE MATCHES BACKEND MODEL
   const [form, setForm] = useState({
     agentName: "",
     phone: "",
@@ -13,14 +13,33 @@ const AgentRegistration = () => {
     city: "",
     country: "",
     contactPersons: [
-      {
-        name: "",
-        designation: "",
-        email: "",
-        mobile: ""
-      }
+      { name: "", designation: "", email: "", mobile: "" }
     ]
   });
+
+  const [countries, setCountries] = useState([]); // ✅
+  const [cities, setCities] = useState([]);       // ✅
+
+  /* ================= LOAD DROPDOWNS ================= */
+
+  useEffect(() => {
+    api
+      .get("/countries")
+      .then(res => setCountries(res.data || []))
+      .catch(() => toast.error("Failed to load countries"));
+  }, []);
+
+  useEffect(() => {
+    if (!form.country) {
+      setCities([]);
+      return;
+    }
+
+    api
+      .get(`/cities?countryId=${form.country}`)
+      .then(res => setCities(res.data || []))
+      .catch(() => setCities([]));
+  }, [form.country]);
 
   /* ================= HANDLERS ================= */
 
@@ -39,9 +58,8 @@ const AgentRegistration = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // 🔴 HARD FRONTEND VALIDATION (MATCHES BACKEND)
     if (!form.agentName || !form.city || !form.country) {
-      toast.error("Agent Name, City and Country are required");
+      toast.error("Agent Name, Country and City are required");
       return;
     }
 
@@ -54,7 +72,6 @@ const AgentRegistration = () => {
     try {
       setLoading(true);
 
-      // DEBUG (keep for now)
       console.log("AGENT SUBMIT PAYLOAD:", form);
 
       const res = await api.post("/agents", form);
@@ -74,7 +91,6 @@ const AgentRegistration = () => {
         { autoClose: false }
       );
 
-      // RESET FORM
       setForm({
         agentName: "",
         phone: "",
@@ -85,6 +101,7 @@ const AgentRegistration = () => {
           { name: "", designation: "", email: "", mobile: "" }
         ]
       });
+      setCities([]);
 
     } catch (err) {
       console.error("AGENT CREATE ERROR:", err.response?.data);
@@ -138,21 +155,31 @@ const AgentRegistration = () => {
           {/* LOCATION */}
           <Section title="Location Details">
             <Grid>
-                <Input
+              <Select
                 label="Country"
                 name="country"
                 value={form.country}
                 onChange={handleChange}
                 required
-              />
-              <Input
+              >
+                <option value="">Select Country</option>
+                {countries.map(c => (
+                  <option key={c._id} value={c._id}>{c.name}</option>
+                ))}
+              </Select>
+
+              <Select
                 label="City"
                 name="city"
                 value={form.city}
                 onChange={handleChange}
                 required
-              />
-            
+              >
+                <option value="">Select City</option>
+                {cities.map(c => (
+                  <option key={c._id} value={c._id}>{c.name}</option>
+                ))}
+              </Select>
             </Grid>
           </Section>
 
@@ -237,5 +264,20 @@ const Input = ({ label, ...props }) => (
       className="border rounded-lg px-3 py-2
                  focus:outline-none focus:ring-2 focus:ring-[#3E4A8A]"
     />
+  </div>
+);
+
+const Select = ({ label, children, ...props }) => (
+  <div className="flex flex-col gap-1">
+    <label className="text-sm font-medium text-gray-700">
+      {label}
+    </label>
+    <select
+      {...props}
+      className="border rounded-lg px-3 py-2 bg-white
+                 focus:outline-none focus:ring-2 focus:ring-[#3E4A8A]"
+    >
+      {children}
+    </select>
   </div>
 );

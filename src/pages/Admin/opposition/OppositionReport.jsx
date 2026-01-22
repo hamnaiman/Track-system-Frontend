@@ -98,6 +98,7 @@ const OppositionReport = () => {
 
         {/* RESULTS */}
        
+{/* RESULTS */}
 <div className="bg-white rounded-xl shadow">
 
   <div className="px-4 py-3 bg-[#3E4A8A] text-white font-semibold">
@@ -107,7 +108,10 @@ const OppositionReport = () => {
   {/* ===== MOBILE CARDS ===== */}
   <div className="sm:hidden p-4 space-y-3">
     {records.length ? records.map(r => (
-      <div key={r.srNo} className="border rounded-lg p-3 bg-gray-50 shadow-sm">
+      <div
+        key={r.srNo}
+        className="border rounded-lg p-3 bg-gray-50 shadow-sm"
+      >
         <Row label="#"> {r.srNo}</Row>
         <Row label="Opposition No">{r.oppositionNumber}</Row>
         <Row label="Type">{r.oppositionType}</Row>
@@ -115,7 +119,9 @@ const OppositionReport = () => {
         <Row label="Trademark">{r.trademark}</Row>
         <Row label="Journal No">{r.journalNo}</Row>
         <Row label="Client">{r.clientName}</Row>
-        <Row label="Date">{new Date(r.oppositionDate).toLocaleDateString()}</Row>
+        <Row label="Date">
+          {new Date(r.oppositionDate).toLocaleDateString()}
+        </Row>
       </div>
     )) : (
       <p className="text-center text-gray-500 py-6">
@@ -124,45 +130,64 @@ const OppositionReport = () => {
     )}
   </div>
 
-  {/* ===== DESKTOP TABLE ===== */}
-  <div className="hidden sm:block overflow-x-auto max-h-[60vh] overflow-y-auto">
-    <table className="min-w-[900px] w-full text-sm">
-      <thead className="bg-blue-50 text-[#3E4A8A] sticky top-0 z-10">
-        <tr>
-          <Th>#</Th>
-          <Th>Opposition No</Th>
-          <Th>Type</Th>
-          <Th>Status</Th>
-          <Th>Trademark</Th>
-          <Th>Journal No</Th>
-          <Th>Client</Th>
-          <Th>Date</Th>
-        </tr>
-      </thead>
-      <tbody>
-        {records.length ? records.map(r => (
-          <tr key={r.srNo} className="border-t hover:bg-gray-50">
-            <Td>{r.srNo}</Td>
-            <Td>{r.oppositionNumber}</Td>
-            <Td>{r.oppositionType}</Td>
-            <Td>{r.status}</Td>
-            <Td>{r.trademark}</Td>
-            <Td>{r.journalNo}</Td>
-            <Td>{r.clientName}</Td>
-            <Td>{new Date(r.oppositionDate).toLocaleDateString()}</Td>
-          </tr>
-        )) : (
-          <tr>
-            <td colSpan="8" className="text-center py-6 text-gray-400">
-              No records found
-            </td>
-          </tr>
-        )}
-      </tbody>
-    </table>
-  </div>
+  {/* ===== DESKTOP TABLE (SCROLL FIXED) ===== */}
+  <div className="hidden sm:block">
 
+    {/* Horizontal Scroll */}
+    <div className="overflow-x-auto">
+
+      {/* Vertical Scroll */}
+      <div className="max-h-[60vh] overflow-y-auto">
+
+        <table className="min-w-[900px] w-full text-sm">
+          <thead className="bg-blue-50 text-[#3E4A8A] sticky top-0 z-10">
+            <tr>
+              <Th>#</Th>
+              <Th>Opposition No</Th>
+              <Th>Type</Th>
+              <Th>Status</Th>
+              <Th>Trademark</Th>
+              <Th>Journal No</Th>
+              <Th>Client</Th>
+              <Th>Date</Th>
+            </tr>
+          </thead>
+
+          <tbody>
+            {records.length ? records.map(r => (
+              <tr
+                key={r.srNo}
+                className="border-t hover:bg-gray-50"
+              >
+                <Td>{r.srNo}</Td>
+                <Td>{r.oppositionNumber}</Td>
+                <Td>{r.oppositionType}</Td>
+                <Td>{r.status}</Td>
+                <Td>{r.trademark}</Td>
+                <Td>{r.journalNo}</Td>
+                <Td>{r.clientName}</Td>
+                <Td>
+                  {new Date(r.oppositionDate).toLocaleDateString()}
+                </Td>
+              </tr>
+            )) : (
+              <tr>
+                <td
+                  colSpan="8"
+                  className="text-center py-6 text-gray-400"
+                >
+                  No records found
+                </td>
+              </tr>
+            )}
+          </tbody>
+        </table>
+
+      </div>
+    </div>
+  </div>
 </div>
+
 
       </div>
 

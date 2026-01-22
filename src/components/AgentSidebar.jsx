@@ -23,23 +23,18 @@ const AgentSidebar = () => {
   };
 
   return (
-    <aside
-      className="
-        w-64 bg-white border-r h-screen
-        flex flex-col
-        overflow-y-auto overflow-x-hidden
-        scrollbar-thin scrollbar-thumb-gray-300
-      "
-    >
-      {/* ===== BRAND ===== */}
-      <div className="h-20 shrink-0 flex items-center px-5 pt-2 border-b">
+    <aside className="w-64 bg-white border-r h-full flex flex-col">
+
+      {/* ===== HEADER ===== */}
+      <div className="h-20 shrink-0 flex items-center px-5 border-b">
         <h1 className="text-sm font-bold text-[#3E4A8A] uppercase tracking-wide">
           Trade Developers & Protectors
         </h1>
       </div>
 
-      {/* ===== MENU ===== */}
-      <div className="py-3 space-y-4 flex-1">
+      {/* ===== SCROLLABLE MENU ===== */}
+      <div className="flex-1 overflow-y-auto overflow-x-hidden py-3 scrollbar-thin scrollbar-thumb-gray-300">
+
         <Section title="Trademark">
           <Item to="/agent/dashboard">Dashboard</Item>
           <Item to="/agent/applications">Applications</Item>
@@ -59,32 +54,32 @@ const AgentSidebar = () => {
           <Item to="/agent/reports/renewal">Renewal Report</Item>
           <Item to="/agent/reports/single-query">Single Query</Item>
         </Section>
+
       </div>
 
-      {/* ===== LOGOUT ===== */}
+      {/* ===== FIXED FOOTER ===== */}
       <div className="border-t p-3 shrink-0">
         <button
           onClick={handleLogout}
-          className="
-            w-full flex items-center gap-2 px-4 py-2 text-sm
-            text-red-600 hover:bg-red-50 rounded-md transition
-          "
+          className="w-full flex items-center justify-center gap-2 px-4 py-2 text-sm
+                     text-red-600 hover:bg-red-50 rounded-md transition"
         >
           Logout
         </button>
       </div>
+
     </aside>
   );
 };
 
 /* ================= REUSABLE ================= */
 const Section = ({ title, children }) => (
-  <div>
-    <div className="px-5 mb-2 text-xs font-semibold text-gray-400 uppercase tracking-wide">
+  <>
+    <div className="px-5 mt-4 mb-2 text-xs font-semibold text-gray-400 uppercase tracking-wide">
       {title}
     </div>
     <nav className="space-y-1 px-2">{children}</nav>
-  </div>
+  </>
 );
 
 const Item = ({ to, children }) => (

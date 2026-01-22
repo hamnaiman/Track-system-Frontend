@@ -20,11 +20,10 @@ const Sidebar = ({ role, name }) => {
   };
 
   return (
-    
-    <aside className="w-64 bg-white border-r h-screen overflow-y-auto flex flex-col">
+    <aside className="w-64 bg-white border-r h-full flex flex-col">
 
       {/* ===== BRAND ===== */}
-      <div className="h-20 flex flex-col justify-center px-5 border-b">
+      <div className="h-20 shrink-0 flex flex-col justify-center px-5 border-b">
         <h1 className="text-sm font-bold text-[#3E4A8A] uppercase tracking-wide">
           TRADE DEVELOPERS & PROTECTORS
         </h1>
@@ -33,8 +32,8 @@ const Sidebar = ({ role, name }) => {
         )}
       </div>
 
-      {/* ===== ALL MENU (NO SCROLL HERE) ===== */}
-      <div className="py-3 space-y-4 flex-1">
+      {/* ===== SCROLLABLE MENU ===== */}
+      <div className="flex-1 overflow-y-auto py-3 space-y-4 scrollbar-thin scrollbar-thumb-gray-300">
 
         {/* ================= ADMIN ================= */}
         {role === "admin" && (
@@ -108,15 +107,13 @@ const Sidebar = ({ role, name }) => {
             </Section>
           </>
         )}
-
-        
       </div>
 
-      {/* ===== LOGOUT (LAST, ALWAYS REACHABLE) ===== */}
-      <div className="border-t p-3">
+      {/* ===== FIXED LOGOUT ===== */}
+      <div className="border-t p-3 shrink-0">
         <button
           onClick={handleLogout}
-          className="w-full px-4 py-2 text-sm text-red-600 hover:bg-red-50 rounded-md"
+          className="w-full px-4 py-2 text-sm text-red-600 hover:bg-red-50 rounded-md transition"
         >
           Logout
         </button>
