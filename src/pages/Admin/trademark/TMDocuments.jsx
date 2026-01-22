@@ -70,13 +70,41 @@ export default function TMDocuments() {
     a.click();
   };
 
-  /* ================= DELETE ================= */
-  const handleDelete = async (id) => {
-    if (!window.confirm("Delete this document?")) return;
-
-    await api.delete(`/documents/${id}`);
-    toast.success("Document deleted");
-    fetchDocuments();
+  /* ================= DELETE (TOAST CONFIRM) ================= */
+  const handleDelete = (id) => {
+    toast.info(
+      ({ closeToast }) => (
+        <div>
+          <p className="font-semibold mb-3">
+            Delete this document?
+          </p>
+          <div className="flex justify-end gap-3">
+            <button
+              onClick={async () => {
+                try {
+                  await api.delete(`/documents/${id}`);
+                  toast.success("Document deleted");
+                  fetchDocuments();
+                } catch {
+                  toast.error("Delete failed");
+                }
+                closeToast();
+              }}
+              className="bg-red-600 text-white px-4 py-1 rounded"
+            >
+              Yes
+            </button>
+            <button
+              onClick={closeToast}
+              className="bg-gray-300 px-4 py-1 rounded"
+            >
+              Cancel
+            </button>
+          </div>
+        </div>
+      ),
+      { autoClose: false }
+    );
   };
 
   return (
@@ -187,10 +215,8 @@ export default function TMDocuments() {
                       Download
                     </button>
                   </Td>
-                  <Td>
-                    <span className="font-semibold">{d.showToClient ? "Yes" : "No"}</span>
-                  </Td>
-                  <Td><span className="font-semibold">{d.remarks}</span></Td>
+                  <Td>{d.showToClient ? "Yes" : "No"}</Td>
+                  <Td>{d.remarks}</Td>
                   <Td className="text-center">
                     <button
                       onClick={() => handleDelete(d._id)}
@@ -206,7 +232,7 @@ export default function TMDocuments() {
         </table>
       </div>
 
-      {/* ================= MOBILE CARD VIEW ================= */}
+      {/* ================= MOBILE VIEW ================= */}
       <div className="md:hidden space-y-4">
         {documents.map((d, i) => (
           <div

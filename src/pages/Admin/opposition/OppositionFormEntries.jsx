@@ -128,7 +128,6 @@ const OppositionFormEntries = () => {
               }
               className="border rounded-lg px-3 py-2 w-full"
             />
-
             <input
               placeholder="Form Number"
               value={form.formNumber}
@@ -137,7 +136,6 @@ const OppositionFormEntries = () => {
               }
               className="border rounded-lg px-3 py-2 w-full"
             />
-
             <input
               type="date"
               value={form.filingDate}
@@ -146,7 +144,6 @@ const OppositionFormEntries = () => {
               }
               className="border rounded-lg px-3 py-2 w-full"
             />
-
             <input
               placeholder="Remarks (optional)"
               value={form.remarks}
@@ -159,16 +156,16 @@ const OppositionFormEntries = () => {
 
           <button
             onClick={handleAdd}
-            className="w-full sm:w-auto bg-gray-800 text-white px-6 py-2 rounded-lg font-semibold"
+            className="w-full sm:w-auto bg-[#3E4A8A] text-white px-6 py-2 rounded-lg font-semibold"
           >
             Save Entry
           </button>
         </div>
 
-        {/* TABLE FOR DESKTOP */}
+        {/* DESKTOP TABLE */}
         <div className="hidden md:block overflow-x-auto border rounded-xl">
           <table className="min-w-full text-sm">
-            <thead>
+            <thead className="bg-blue-50 text-[#3E4A8A]">
               <tr>
                 <Th>Form #</Th>
                 <Th>Filing Date</Th>
@@ -191,14 +188,17 @@ const OppositionFormEntries = () => {
                 </tr>
               ) : (
                 entries.map((e) => (
-                  <tr key={e._id} className="border-t hover:bg-gray-50">
+                  <tr
+                    key={e._id}
+                    className="border-t hover:bg-blue-50 transition"
+                  >
                     <Td>{e.formNumber}</Td>
                     <Td>{new Date(e.filingDate).toLocaleDateString()}</Td>
                     <Td>{e.remarks || "-"}</Td>
                     <Td className="text-center">
                       <button
                         onClick={() => handleDelete(e._id)}
-                        className="text-red-600 hover:underline font-semibold"
+                        className="text-red-600 hover:text-red-800 font-semibold"
                       >
                         Delete
                       </button>
@@ -213,7 +213,10 @@ const OppositionFormEntries = () => {
         {/* MOBILE CARD VIEW */}
         <div className="md:hidden space-y-3">
           {entries.map((e) => (
-            <div key={e._id} className="border rounded-xl p-4 bg-white shadow space-y-2">
+            <div
+              key={e._id}
+              className="border-l-4 border-[#3E4A8A] rounded-xl p-4 bg-blue-50 shadow space-y-2"
+            >
               <p><b>Form #:</b> {e.formNumber}</p>
               <p><b>Filing Date:</b> {new Date(e.filingDate).toLocaleDateString()}</p>
               <p><b>Remarks:</b> {e.remarks || "-"}</p>
@@ -236,13 +239,13 @@ const OppositionFormEntries = () => {
 
 /* ================= HELPERS ================= */
 const Th = ({ children, className = "" }) => (
-  <th className={`p-3 border text-left font-bold text-[#3E4A8A] bg-blue-50 ${className}`}>
+  <th className={`p-3 text-left font-bold ${className}`}>
     {children}
   </th>
 );
 
 const Td = ({ children, className = "", colSpan }) => (
-  <td className={`p-3 border font-semibold ${className}`} colSpan={colSpan}>
+  <td className={`p-3 font-semibold ${className}`} colSpan={colSpan}>
     {children}
   </td>
 );

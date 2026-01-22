@@ -169,36 +169,48 @@ const FileStatusSetup = () => {
             </thead>
 
             <tbody>
-              {fileStatuses.length === 0 ? (
-                <tr>
-                  <td colSpan="4" className="text-center p-6 text-gray-500">
-                    No File Status Found
-                  </td>
-                </tr>
-              ) : (
-                fileStatuses.map((item, index) => (
-                  <tr
-                    key={item._id}
-                    className="border-b hover:bg-gray-50"
-                  >
-                    <Td>{index + 1}</Td>
-                    <Td>{item.description}</Td>
-                    <Td
-                      onClick={() => handleEdit(item)}
-                      className="text-center text-[#3E4A8A] cursor-pointer font-medium"
-                    >
-                      Edit
-                    </Td>
-                    <Td
-                      onClick={() => handleDelete(item._id)}
-                      className="text-center text-red-600 cursor-pointer font-medium"
-                    >
-                      Delete
-                    </Td>
-                  </tr>
-                ))
-              )}
-            </tbody>
+  {fileStatuses.length === 0 ? (
+    <tr>
+      <td colSpan="4" className="text-center p-6 text-gray-500">
+        No File Status Found
+      </td>
+    </tr>
+  ) : (
+    fileStatuses.map((item, index) => (
+      <tr
+        key={item._id}
+        className="border-b hover:bg-gray-50"
+      >
+        <Td>{index + 1}</Td>
+
+        <Td>{item.description}</Td>
+
+        {/* ✅ EDIT */}
+        <Td className="text-center">
+          <button
+            type="button"
+            onClick={() => handleEdit(item)}
+            className="text-[#3E4A8A] font-medium hover:underline cursor-pointer"
+          >
+            Edit
+          </button>
+        </Td>
+
+        {/* ✅ DELETE */}
+        <Td className="text-center">
+          <button
+            type="button"
+            onClick={() => handleDelete(item._id)}
+            className="text-red-600 font-medium hover:underline cursor-pointer"
+          >
+            Delete
+          </button>
+        </Td>
+      </tr>
+    ))
+  )}
+</tbody>
+
           </table>
         </div>
       </div>

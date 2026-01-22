@@ -34,7 +34,7 @@ const UserManual = () => {
 
     try {
       setLoading(true);
-      await api.post("/documents/admin/user-manual", formData);
+      await api.post("/user-manuals/admin/user-manual", formData);
       toast.success("User manual uploaded successfully");
       setFile(null);
     } catch (error) {
@@ -54,7 +54,7 @@ const UserManual = () => {
             User Manual Setup
           </h2>
           <p className="text-sm text-gray-500 mt-1">
-            Upload the official user manual across the system
+            Upload the official user manual available across the system
           </p>
         </div>
 
@@ -62,7 +62,7 @@ const UserManual = () => {
         <div className="space-y-5">
 
           <div>
-            <label className="block text-sm font-semibold text-[#3E4A8A] mb-2">
+            <label className="block text-sm font-semibold text-gray-600 mb-2">
               Upload User Manual (PDF)
             </label>
 

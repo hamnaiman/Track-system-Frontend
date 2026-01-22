@@ -6,7 +6,6 @@ const TMFormEntries = () => {
   const [applications, setApplications] = useState([]);
   const [tmForms, setTMForms] = useState([]);
   const [entries, setEntries] = useState([]);
-
   const [selectedApp, setSelectedApp] = useState("");
   const [loading, setLoading] = useState(false);
 
@@ -95,7 +94,7 @@ const TMFormEntries = () => {
     }
   };
 
-  /* ================= EDIT / DELETE ================= */
+  /* ================= EDIT ================= */
   const handleEdit = (e) => {
     setForm({
       tmForm: e.tmForm?._id,
@@ -105,16 +104,41 @@ const TMFormEntries = () => {
     setEditId(e._id);
   };
 
-  const handleDelete = async (id) => {
-    if (!window.confirm("Delete this entry?")) return;
-
-    try {
-      await api.delete(`/tm-form-entries/${id}`);
-      toast.success("Entry deleted");
-      fetchEntries();
-    } catch {
-      toast.error("Delete failed");
-    }
+  /* ================= DELETE (TOAST CONFIRM) ================= */
+  const handleDelete = (id) => {
+    toast.info(
+      ({ closeToast }) => (
+        <div>
+          <p className="font-semibold mb-3">
+            Delete this TM Form entry?
+          </p>
+          <div className="flex justify-end gap-3">
+            <button
+              onClick={async () => {
+                try {
+                  await api.delete(`/tm-form-entries/${id}`);
+                  toast.success("Entry deleted");
+                  fetchEntries();
+                } catch {
+                  toast.error("Delete failed");
+                }
+                closeToast();
+              }}
+              className="bg-red-600 text-white px-4 py-1 rounded"
+            >
+              Yes
+            </button>
+            <button
+              onClick={closeToast}
+              className="bg-gray-300 px-4 py-1 rounded"
+            >
+              Cancel
+            </button>
+          </div>
+        </div>
+      ),
+      { autoClose: false }
+    );
   };
 
   return (
@@ -260,7 +284,7 @@ const TMFormEntries = () => {
         </div>
       )}
 
-      {/* ================= MOBILE CARD VIEW ================= */}
+      {/* ================= MOBILE VIEW ================= */}
       {selectedApp && (
         <div className="md:hidden space-y-4">
           {entries.map(e => (

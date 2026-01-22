@@ -343,40 +343,51 @@ const ApplicationDetails = () => {
       </form>
 
       {/* ===== TABLE DESKTOP ===== */}
-      <div className="hidden md:block bg-white rounded-2xl shadow-md border p-6">
-        <table className="w-full text-sm">
-          <thead className="bg-blue-50 text-[#3E4A8A]">
-            <tr>
-              <Th>App #</Th>
-              <Th>Trademark</Th>
-              <Th>Client</Th>
-              <Th>Edit</Th>
-              <Th>Delete</Th>
-            </tr>
-          </thead>
-          <tbody>
-            {applications.map((app) => (
-              <tr key={app._id} className="border-b">
-                <Td>{app.applicationNumber}</Td>
-                <Td>{app.trademark}</Td>
-                <Td>{app.client?.customerName}</Td>
-                <Td
-                  className="text-blue-600 cursor-pointer"
-                  onClick={() => handleEdit(app)}
-                >
-                  Edit
-                </Td>
-                <Td
-                  className="text-red-600 cursor-pointer"
-                  onClick={() => handleDelete(app._id)}
-                >
-                  Delete
-                </Td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
+      {/* ===== TABLE DESKTOP ===== */}
+<div className="hidden md:block bg-white rounded-2xl shadow-md border p-6">
+  <table className="w-full text-sm">
+    <thead className="bg-blue-50 text-[#3E4A8A]">
+      <tr>
+        <Th>App #</Th>
+        <Th>Trademark</Th>
+        <Th>Client</Th>
+        <Th className="text-center">Edit</Th>
+        <Th className="text-center">Delete</Th>
+      </tr>
+    </thead>
+
+    <tbody>
+      {applications.map((app) => (
+        <tr key={app._id} className="border-b">
+          <Td>{app.applicationNumber}</Td>
+          <Td>{app.trademark}</Td>
+          <Td>{app.client?.customerName}</Td>
+
+          <Td className="text-center">
+            <button
+              type="button"
+              onClick={() => handleEdit(app)}
+              className="text-blue-600 font-medium hover:underline cursor-pointer"
+            >
+              Edit
+            </button>
+          </Td>
+
+          <Td className="text-center">
+            <button
+              type="button"
+              onClick={() => handleDelete(app._id)}
+              className="text-red-600 font-medium hover:underline cursor-pointer"
+            >
+              Delete
+            </button>
+          </Td>
+        </tr>
+      ))}
+    </tbody>
+  </table>
+</div>
+
 
       {/* ===== MOBILE CARDS ===== */}
       <div className="md:hidden space-y-3">

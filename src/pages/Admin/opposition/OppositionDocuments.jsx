@@ -16,17 +16,28 @@ const OppositionDocuments = () => {
   /* ================= FETCH GRID ================= */
   const fetchDocuments = async () => {
     if (!oppositionNumber.trim()) {
-      toast.warning("Opposition / Rectification number is required");
-      return;
+      return toast.warning("Opposition / Rectification number is required");
     }
 
+    const toastId = toast.loading("Loading documents...");
     try {
       const res = await api.get(
         `/opposition-documents?oppositionNumber=${oppositionNumber}`
       );
       setDocuments(res.data || []);
+      toast.update(toastId, {
+        render: "Documents loaded successfully",
+        type: "success",
+        isLoading: false,
+        autoClose: 2000,
+      });
     } catch {
-      toast.error("Failed to load opposition documents");
+      toast.update(toastId, {
+        render: "Failed to load opposition documents",
+        type: "error",
+        isLoading: false,
+        autoClose: 3000,
+      });
     }
   };
 
@@ -44,19 +55,31 @@ const OppositionDocuments = () => {
     formData.append("remarks", remarks);
     formData.append("showToClient", showToClient);
 
+    const toastId = toast.loading("Uploading document...");
     try {
       setLoading(true);
       await api.post("/opposition-documents/upload", formData, {
         headers: { "Content-Type": "multipart/form-data" },
       });
 
-      toast.success("Document uploaded successfully");
+      toast.update(toastId, {
+        render: "Document uploaded successfully",
+        type: "success",
+        isLoading: false,
+        autoClose: 2000,
+      });
+
       setFile(null);
       setRemarks("");
       setShowToClient(false);
       fetchDocuments();
     } catch (err) {
-      toast.error(err.response?.data?.message || "Upload failed");
+      toast.update(toastId, {
+        render: err.response?.data?.message || "Upload failed",
+        type: "error",
+        isLoading: false,
+        autoClose: 3000,
+      });
     } finally {
       setLoading(false);
     }
@@ -64,25 +87,86 @@ const OppositionDocuments = () => {
 
   /* ================= DOWNLOAD ================= */
   const handleDownload = async (doc) => {
-    const res = await api.get(
-      `/opposition-documents/download/${doc._id}`,
-      { responseType: "blob" }
-    );
+    const toastId = toast.loading("Downloading document...");
+    try {
+      const res = await api.get(
+        `/opposition-documents/download/${doc._id}`,
+        { responseType: "blob" }
+      );
 
-    const url = window.URL.createObjectURL(new Blob([res.data]));
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = doc.fileName;
-    a.click();
+      const url = window.URL.createObjectURL(new Blob([res.data]));
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = doc.fileName;
+      a.click();
+
+      toast.update(toastId, {
+        render: "Download started",
+        type: "success",
+        isLoading: false,
+        autoClose: 2000,
+      });
+    } catch {
+      toast.update(toastId, {
+        render: "Download failed",
+        type: "error",
+        isLoading: false,
+        autoClose: 3000,
+      });
+    }
+  };
+
+  /* ================= DELETE CONFIRM TOAST ================= */
+  const confirmDelete = (id) => {
+    toast(
+      ({ closeToast }) => (
+        <div className="space-y-3">
+          <p className="font-semibold text-sm">
+            Are you sure you want to delete this document?
+          </p>
+          <div className="flex justify-end gap-3">
+            <button
+              onClick={closeToast}
+              className="px-3 py-1 rounded bg-gray-200 text-sm font-semibold"
+            >
+              Cancel
+            </button>
+            <button
+              onClick={() => {
+                closeToast();
+                handleDelete(id);
+              }}
+              className="px-3 py-1 rounded bg-red-600 text-white text-sm font-semibold"
+            >
+              Delete
+            </button>
+          </div>
+        </div>
+      ),
+      { autoClose: false }
+    );
   };
 
   /* ================= DELETE ================= */
   const handleDelete = async (id) => {
-    if (!window.confirm("Delete this document?")) return;
-
-    await api.delete(`/opposition-documents/${id}`);
-    toast.success("Document deleted");
-    fetchDocuments();
+    const toastId = toast.loading("Deleting document...");
+    try {
+      await api.delete(`/opposition-documents/${id}`);
+      toast.update(toastId, {
+        render: "Document deleted successfully",
+        type: "success",
+        isLoading: false,
+        autoClose: 2000,
+      });
+      fetchDocuments();
+    } catch {
+      toast.update(toastId, {
+        render: "Delete failed",
+        type: "error",
+        isLoading: false,
+        autoClose: 3000,
+      });
+    }
   };
 
   return (
@@ -163,7 +247,7 @@ const OppositionDocuments = () => {
           </button>
         </div>
 
-        {/* DOCUMENT TABLE FOR DESKTOP */}
+        {/* DESKTOP TABLE */}
         <div className="hidden md:block overflow-x-auto">
           <table className="min-w-full text-sm">
             <thead>
@@ -199,7 +283,7 @@ const OppositionDocuments = () => {
                   <Td className="text-center">
                     <button
                       className="text-red-600 font-semibold"
-                      onClick={() => handleDelete(d._id)}
+                      onClick={() => confirmDelete(d._id)}
                     >
                       Delete
                     </button>
@@ -210,7 +294,7 @@ const OppositionDocuments = () => {
           </table>
         </div>
 
-        {/* MOBILE CARD VIEW */}
+        {/* MOBILE VIEW */}
         <div className="md:hidden space-y-4">
           {documents.map((d, i) => (
             <div key={d._id} className="bg-white p-4 rounded-2xl shadow border space-y-2 text-sm">
@@ -229,7 +313,7 @@ const OppositionDocuments = () => {
               <div className="flex justify-end pt-2">
                 <button
                   className="text-red-600 font-semibold"
-                  onClick={() => handleDelete(d._id)}
+                  onClick={() => confirmDelete(d._id)}
                 >
                   Delete
                 </button>
