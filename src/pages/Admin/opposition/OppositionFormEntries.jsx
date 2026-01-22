@@ -64,17 +64,41 @@ const OppositionFormEntries = () => {
     }
   };
 
-  /* ================= DELETE ================= */
-  const handleDelete = async (id) => {
-    if (!window.confirm("Delete this entry?")) return;
-
-    try {
-      await api.delete(`/opposition/forms/${id}`);
-      toast.success("Entry deleted");
-      fetchEntries();
-    } catch {
-      toast.error("Delete failed");
-    }
+  /* ================= DELETE (TOAST CONFIRM) ================= */
+  const handleDelete = (id) => {
+    toast.info(
+      ({ closeToast }) => (
+        <div>
+          <p className="font-semibold mb-3">
+            Delete this opposition form entry?
+          </p>
+          <div className="flex justify-end gap-3">
+            <button
+              onClick={async () => {
+                try {
+                  await api.delete(`/opposition/forms/${id}`);
+                  toast.success("Entry deleted");
+                  fetchEntries();
+                } catch {
+                  toast.error("Delete failed");
+                }
+                closeToast();
+              }}
+              className="bg-red-600 text-white px-4 py-1 rounded"
+            >
+              Yes
+            </button>
+            <button
+              onClick={closeToast}
+              className="bg-gray-300 px-4 py-1 rounded"
+            >
+              Cancel
+            </button>
+          </div>
+        </div>
+      ),
+      { autoClose: false }
+    );
   };
 
   return (
